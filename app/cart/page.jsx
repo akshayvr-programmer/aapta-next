@@ -4,7 +4,11 @@ import Link from 'next/link'
 import { useCart } from '@/components/CartContext'
 
 export default function Cart() {
-  const { items, removeFromCart, totalItems, totalPrice } = useCart()
+  const cart = useCart()
+
+  if (!cart) return null
+
+  const { items, removeFromCart, totalItems, totalPrice } = cart
 
   if (totalItems === 0) return (
     <div className="min-h-screen flex items-center justify-center"
@@ -63,7 +67,7 @@ export default function Cart() {
           </div>
           <div className="flex justify-between items-center mb-3">
             <span className="text-aapta-muted text-sm">Shipping</span>
-            <span className="text-aapta-muted text-sm">Calculated at checkout</span>
+            <span className="text-aapta-gold text-sm">Free</span>
           </div>
           <div style={{ height: '0.5px', background: 'rgba(201,169,110,0.2)', margin: '16px 0' }} />
           <div className="flex justify-between items-center">

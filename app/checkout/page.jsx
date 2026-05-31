@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Checkout() {
-  const { items, totalPrice, clearCart } = useCart()
+  const cart = useCart()
+  if (!cart) return null
+  const { items, totalPrice, clearCart } = cart
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
