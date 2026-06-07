@@ -1,3 +1,5 @@
+export const maxDuration = 30
+
 export async function POST(request) {
   try {
     const { system, content } = await request.json()
@@ -10,7 +12,7 @@ export async function POST(request) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model:      'claude-sonnet-4-20250514',
+        model:      'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         system,
         messages: [{ role: 'user', content }],
@@ -19,8 +21,8 @@ export async function POST(request) {
 
     const data = await res.json()
 
-    if (data.error) {
-      return Response.json({ error: data.error.message }, { status: 400 })
+    if (!res.ok) {
+      return Response.json({ error: data.error?.message ?? 'API error' }, { status: 400 })
     }
 
     return Response.json({ text: data.content?.[0]?.text ?? '' })

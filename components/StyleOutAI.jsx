@@ -17,7 +17,13 @@ async function askClaude(system, content) {
 function toBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload  = ev => resolve(ev.target.result.split(',')[1])
+    reader.onload  = ev => {
+      const result = ev.target.result
+      resolve({
+        data:      result.split(',')[1],
+        mediaType: file.type || 'image/jpeg',
+      })
+    }
     reader.onerror = reject
     reader.readAsDataURL(file)
   })
@@ -151,8 +157,8 @@ export default function StyleOutAI() {
   async function handleUpload(key, e) {
     const file = e.target.files?.[0]
     if (!file) return
-    const b64 = await toBase64(file)
-    setUploads(u => ({ ...u, [key]: b64 }))
+    const { data, mediaType } = await toBase64(file)
+    setUploads(u => ({ ...u, [key]: { data, mediaType } }))
     setPreviews(p => ({ ...p, [key]: URL.createObjectURL(file) }))
   }
 
@@ -160,7 +166,7 @@ export default function StyleOutAI() {
     const content = []
     for (const k of imgKeys) {
       if (uploads[k]) {
-        content.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: uploads[k] } })
+        content.push({ type: 'image', source: { type: 'base64', media_type: uploads[k].mediaType, data: uploads[k].data } })
         content.push({ type: 'text', text: k === 'you' ? 'This is the person.' : k === 'outfit' ? 'This is the clothing piece.' : k === 'saree' ? 'This is the heirloom textile.' : 'This is the person.' })
       }
     }
